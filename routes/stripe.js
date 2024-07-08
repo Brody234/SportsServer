@@ -105,11 +105,12 @@ async function getCustomerIdByEmail(email, res) {
         });
 
         if (customers.data.length === 0) {
-            throw new Error(`No customer found with email: ${email}`);
+            
         }
         return customers.data[0].id;
     } catch (error) {
-        return res.status(500).json(error)
+        res.status(500).json(error)
+        return 'done'
     }
 }
 
@@ -119,17 +120,16 @@ async function checkSubscriptionStatus(customerId, res) {
             customer: customerId,
             status: 'all',
         });
-        console.log(subscriptions)
         const validSubscription = subscriptions.data.some(subscription => 
             (subscription.status === 'active' || subscription.status === 'trialing') &&
             subscription.items.data.some(item => 
                 item.price.id === yearly_basic || item.price.id === monthly_basic
             )
         );
-        console.log(validSubscription)
         return validSubscription;
     } catch (error) {
-        return res.status(500).json(error)
+        res.status(500).json(error)
+        return 'done'
     }
 }
 
@@ -146,12 +146,18 @@ async function checkSubscriptionMiddleware(req, res, next) {
                 return next();
             }
             customerId = await getCustomerIdByEmail(email, res);
+            if(customerId == 'done'){
+              return
+            }
             // Save the Stripe customer ID to the user record
             req.user.stripeCustomerId = customerId;
             
             
         }
         const hasValidSubscription = await checkSubscriptionStatus(customerId, res);
+        if(hasValidSubscription == 'done'){
+          return
+        }
         req.isSubscribed = hasValidSubscription;
         req.user.subscribed = hasValidSubscription
         const newU = await req.user.save()
