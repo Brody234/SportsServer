@@ -41,6 +41,12 @@ app.use('/user', userRoute);
 const arbitrageRouter = require('./routes/arbitrage')
 app.use('/arbitrage', arbitrageRouter)
 
+const affiliateRouter = require('./routes/affiliate')
+app.use('/affiliate', affiliateRouter)
+
+const stripeRouter = require('./routes/stripe')
+app.use('/stripe', stripeRouter)
+
 app.listen(port, () => console.log('server has started'));
 
 async function initializeRequestHandlers() {

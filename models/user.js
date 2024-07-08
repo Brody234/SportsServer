@@ -14,7 +14,7 @@ const userSchema = new Schema({
         type: String,
         required: false
     },
-    stripeCustomerID: {
+    stripeCustomerId: {
         type: String,
         default: ""
     },
@@ -25,6 +25,14 @@ const userSchema = new Schema({
     subscribed: {
         type: Boolean,
         default: false
+    },
+    affiliateId: {
+        type: mongoose.Schema.ObjectId || null,
+        default: null
+    },
+    code: {
+        type: String,
+        default: ''
     }
 });
 

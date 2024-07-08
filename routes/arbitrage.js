@@ -71,7 +71,7 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
             req.datalogged = data[0]
         }
         catch (err){ 
-            return res.status(500).send()
+            return res.status(500).json(err)
         }
         if (req.datalogged && req.datalogged.mostRecentCall) {
             const mostRecentCall = new Date(req.datalogged.mostRecentCall);
@@ -96,7 +96,7 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
                     const newLog = await req.datalogged.save()
                 }
                 catch(err){
-                    res.status(500).json(err).send()
+                    res.status(500).json(err)
                 }
             }
         }
@@ -112,7 +112,6 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
 
             try{
                 const data = await find(region, sport, market)
-                console.log(data)
                 if(!data && !skipped){
                     i--
                     continue
@@ -137,10 +136,10 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
                         req.datalogged.opportunities = opps
                         req.datalogged.mostRecentCall = currentTime
                         req.datalogged.save()
-                        return res.status(200).json({opportunities: opps}).send()
+                        return res.status(200).json({opportunities: opps})
                     }
                     catch(err){
-                        return res.status(500).json(err).send()
+                        return res.status(500).json(err)
                     }
                 }
                 if(i > 10){
@@ -161,10 +160,10 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
                         req.datalogged.opportunities = opps
                         req.datalogged.mostRecentCall = currentTime
                         req.datalogged.save()
-                        return res.status(200).json({opportunities: opps}).send()
+                        return res.status(200).json({opportunities: opps})
                     }
                     catch(err){
-                        return res.status(500).json(err).send()
+                        return res.status(500).json(err)
                     }
                 }
             }
@@ -175,7 +174,7 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
         }
     }
     else{
-        res.status(500).send()
+        res.status(500)
     }
 })
 
@@ -247,10 +246,10 @@ async function checkSubscription(req, res, next){
     }
     else{
         try{
-            res.status(403).send()
+            return res.status(403)
         }
         catch(err){
-            res.status(500).json(err).send()
+            return res.status(500).json(err)
         }
     }
 }
@@ -266,7 +265,7 @@ async function callSports(region){
         return keys
     }
     catch(err){
-        return res.status(500).json(err).send()
+        return res.status(500).json(err)
     }
     
 }

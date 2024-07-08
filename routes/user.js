@@ -21,7 +21,7 @@ router.post('/new', hashPass, createUser, createToken, async(req, res)=>{
         })
     }
     catch(err){
-        res.status(500).send(err)
+        res.status(500).json(err)
     }
 })
 
@@ -33,7 +33,7 @@ router.post('/login', findUser, checkPass, createToken, async (req, res)=>{
         })
     }
     catch(err){
-        res.status(500).send(err)
+        res.status(500).json(err)
     }
 })
 
