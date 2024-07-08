@@ -65,6 +65,7 @@ const opportunities = [{
 
 router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req, res)=>{
     const region = req.params.region;
+
     if(region == 'us' || region == 'eu' || region == 'uk' || region == 'au'){
         try{
             const data = await Data.find({region: region})
@@ -172,6 +173,9 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
 async function find(region, sport, market) {
     const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?apiKey=${key}&regions=${region}&markets=${market}`;
     const response = await fetch(url);
+    if(response.headers.connection.x-requests-remaining <= 0){
+        return res.status(400).json({message: "Out Of API Requests"})
+    }
     if (!response.ok) {
         return false
     }

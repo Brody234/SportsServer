@@ -25,6 +25,9 @@ const requestSimplifier = new Schema({
             matchStart: {
                 type: Date
             },
+            sport:{
+                type: String
+            },
             bets:[{
                 number: {
                     type: Number,
