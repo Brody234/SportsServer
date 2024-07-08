@@ -116,15 +116,10 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
                     i--
                     continue
                 }
-                const arbed = arbitrate(data, market)
-                console.log(arbed)
-                console.log("ALL ARBED")
+                const arbed = arbitrate(data, market, sport)
                 allarbed.push(...arbed)
-                console.log(allarbed)
                 if(i > 4 && allarbed.some(item => item.profit > 0.03)){
                     req.datalogged.opportunities.push(...allarbed)
-                    console.log("----")
-                    console.log(req.datalogged.opportunities)
                     const tenMinutesInMilliseconds = 10 * 60 * 1000; 
                     const currentTime = Date.now(); 
 
@@ -144,9 +139,7 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
                 }
                 if(i > 10){
                     req.datalogged.opportunities.push(...allarbed)
-                    console.log("----")
 
-                    console.log(req.datalogged.opportunities)
                     const tenMinutesInMilliseconds = 20 * 60 * 1000; 
                     const currentTime = Date.now(); 
 
@@ -155,8 +148,6 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
                         return currentTime - foundTime <= tenMinutesInMilliseconds; 
                     });
                     try{
-                        console.log("----")
-                        console.log(opps)
                         req.datalogged.opportunities = opps
                         req.datalogged.mostRecentCall = currentTime
                         req.datalogged.save()
@@ -181,7 +172,6 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
 async function find(region, sport, market) {
     const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?apiKey=${key}&regions=${region}&markets=${market}`;
     const response = await fetch(url);
-    console.log(response) 
     if (!response.ok) {
         return false
     }
@@ -189,7 +179,7 @@ async function find(region, sport, market) {
     const data = await response.json();
     return data
 }
-function arbitrate(oddsData, market){
+function arbitrate(oddsData, market, sport){
     const strategies = []
     for(let i = 0; i < oddsData.length; i++){
         const games = oddsData[i]
@@ -201,6 +191,7 @@ function arbitrate(oddsData, market){
                         if(strategy.bet){
                             const object  = {
                                 game: games.home_team + " vs " + games.away_team,
+                                sport: sport,
                                 bet: strategy.bet,
                                 betCount: 2,
                                 profit: strategy.payout,
@@ -229,7 +220,6 @@ function arbitrate(oddsData, market){
                                     }  
                                 ]
                             }
-                            console.log(object)
                             strategies.push(object)
                         }
                     }
@@ -280,7 +270,6 @@ function decimalToStrategy (decimalA, decimalB) {
     const payout = ((1/opportunity))-1
     const a = (probabilityA/opportunity)
     const b = (probabilityB/opportunity)
-    console.log("opportunity found")
     return {A: a, B: b, bet: true, payout: payout}
 }
 
