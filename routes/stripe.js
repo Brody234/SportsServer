@@ -98,7 +98,7 @@ router.get('/subscribe/yearly', checkToken, authorizedUser, checkSubscriptionMid
     }
 })  
 
-async function getCustomerIdByEmail(email) {
+async function getCustomerIdByEmail(email, res) {
     try {
         const customers = await stripe.customers.list({
             email: email,
@@ -113,7 +113,7 @@ async function getCustomerIdByEmail(email) {
     }
 }
 
-async function checkSubscriptionStatus(customerId) {
+async function checkSubscriptionStatus(customerId, res) {
     try {
         const subscriptions = await stripe.subscriptions.list({
             customer: customerId,
@@ -145,13 +145,13 @@ async function checkSubscriptionMiddleware(req, res, next) {
                 req.isSubscribed = false;
                 return next();
             }
-            customerId = await getCustomerIdByEmail(email);
+            customerId = await getCustomerIdByEmail(email, res);
             // Save the Stripe customer ID to the user record
             req.user.stripeCustomerId = customerId;
             
             
         }
-        const hasValidSubscription = await checkSubscriptionStatus(customerId);
+        const hasValidSubscription = await checkSubscriptionStatus(customerId, res);
         req.isSubscribed = hasValidSubscription;
         req.user.subscribed = hasValidSubscription
         const newU = await req.user.save()
