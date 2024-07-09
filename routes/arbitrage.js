@@ -252,7 +252,7 @@ function arbitrate(oddsData, market){
 }
 
 async function checkSubscription(req, res, next){
-    if(req.user.subscribed){
+    if(req.user && req.user.subscribed){
         next()
     }
     else{
