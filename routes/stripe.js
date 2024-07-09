@@ -81,7 +81,7 @@ router.get('/subscribe/yearly', checkToken, authorizedUser, checkSubscriptionMid
             sub: "Basic"
         }
         };
-        
+        console.log(sessionParams)
         if (req.user.stripeCustomerID) {
         sessionParams.customer = req.user.stripeCustomerID;
         } else {
@@ -89,7 +89,7 @@ router.get('/subscribe/yearly', checkToken, authorizedUser, checkSubscriptionMid
         }
         
         const session = await stripe.checkout.sessions.create(sessionParams);
-        
+        console.log(session)
         const wait = await req.user.save()
         return res.send({url: session})
     }
@@ -103,12 +103,20 @@ async function getCustomerIdByEmail(email, res) {
         const customers = await stripe.customers.list({
             email: email,
         });
-
+        console.log(customers)
         if (customers.data.length === 0) {
             
         }
-        return customers.data[0].id;
+        if(customers && customers.data && customers.data[0] && customers.data[0].id){
+          console.log('ehre')
+          return customers.data[0].id
+        }
+        else{
+          console.log('asfdjlk')
+          return "no data";
+        }
     } catch (error) {
+        console.log('erroring')
         res.status(500).json(error)
         return 'done'
     }
@@ -146,7 +154,14 @@ async function checkSubscriptionMiddleware(req, res, next) {
                 return next();
             }
             customerId = await getCustomerIdByEmail(email, res);
+            console.log(customerId)
             if(customerId == 'done'){
+              return
+            }
+            if(customerId == 'no data'){
+              req.isSubscribed = false;
+              next()
+
               return
             }
             // Save the Stripe customer ID to the user record
