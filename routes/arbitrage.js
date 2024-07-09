@@ -15,7 +15,7 @@ const User = require('../models/user')
 const Data = require('../models/requestsimplifier')
 
 
-const key = "87b9c63f58cc921b86d3c5301ac1146a"
+const key = "7a2863aea6a0940ffeb0b0ffacc9f548"
 
 /*
 
