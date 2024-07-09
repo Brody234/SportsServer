@@ -39,8 +39,8 @@ router.get('/subscribe/monthly', checkToken, authorizedUser, checkSubscriptionMi
         }
       };
       
-      if (req.user.stripeCustomerID) {
-        sessionParams.customer = req.user.stripeCustomerID;
+      if (req.user.stripeCustomerId) {
+        sessionParams.customer = req.user.stripeCustomerId;
       } else {
         sessionParams.customer_email = req.user.email;
       }
@@ -82,8 +82,8 @@ router.get('/subscribe/yearly', checkToken, authorizedUser, checkSubscriptionMid
         }
         };
         console.log(sessionParams)
-        if (req.user.stripeCustomerID) {
-        sessionParams.customer = req.user.stripeCustomerID;
+        if (req.user.stripeCustomerId) {
+        sessionParams.customer = req.user.stripeCustomerId;
         } else {
         sessionParams.customer_email = req.user.email;
         }
