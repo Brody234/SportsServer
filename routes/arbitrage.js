@@ -256,6 +256,7 @@ async function checkSubscription(req, res, next){
         next()
     }
     else{
+        console.log('catching')
         try{
             return res.status(403)
         }
