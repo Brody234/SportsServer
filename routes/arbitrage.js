@@ -14,6 +14,7 @@ const checkPass = bcrypt.login
 const User = require('../models/user')
 const Data = require('../models/requestsimplifier')
 
+const n = 10
 
 const key = "7a2863aea6a0940ffeb0b0ffacc9f548"
 
@@ -107,18 +108,31 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
         }
         const allarbed = []
         const skipped = false
-        for(let i = 0; i < 12; i++){
+        try{
+            const data = await find(region, 'upcoming', 'h2h')
+            if(data){
+                const arbed = arbitrate(data, 'h2h')
+                allarbed.push(...arbed)    
+            }
+            }
+        catch(err){
+
+        }
+        for(let i = 0; i < n+2; i++){
                 const sport = bestKeys.sports[Math.floor(bestKeys.sports.length*Math.random())]
                 const market = bestKeys.markets[Math.floor(bestKeys.markets.length*Math.random())]
-
+                console.log('entering loop')
             try{
                 const data = await find(region, sport, market)
                 if(!data && !skipped){
                     i--
+                    console.log('skipping')
                     continue
                 }
-                const arbed = arbitrate(data, market, sport)
+                console.log('not skipeed')
+                const arbed = arbitrate(data, market)
                 allarbed.push(...arbed)
+                console.log(arbed)
                 if(i > 4 && allarbed.some(item => item.profit > 0.03)){
                     req.datalogged.opportunities.push(...allarbed)
                     const tenMinutesInMilliseconds = 10 * 60 * 1000; 
@@ -138,7 +152,7 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
                         return res.status(500).json(err)
                     }
                 }
-                if(i > 10){
+                if(i > n){
                     req.datalogged.opportunities.push(...allarbed)
 
                     const tenMinutesInMilliseconds = 20 * 60 * 1000; 
@@ -164,6 +178,7 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
             }
 
         }
+        res.status(200).json({message: "no opportunities found"})
     }
     else{
         res.status(500)
@@ -173,17 +188,19 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
 async function find(region, sport, market) {
     const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?apiKey=${key}&regions=${region}&markets=${market}`;
     const response = await fetch(url);
-    if(response.headers.connection.x-requests-remaining <= 0){
-        return res.status(400).json({message: "Out Of API Requests"})
-    }
+    console.log("Response")
+    
     if (!response.ok) {
+        console.log('entering false error')
         return false
     }
-
+    console.log('getting response data')
     const data = await response.json();
+    
+    console.log(data)
     return data
 }
-function arbitrate(oddsData, market, sport){
+function arbitrate(oddsData, market){
     const strategies = []
     for(let i = 0; i < oddsData.length; i++){
         const games = oddsData[i]
@@ -195,7 +212,7 @@ function arbitrate(oddsData, market, sport){
                         if(strategy.bet){
                             const object  = {
                                 game: games.home_team + " vs " + games.away_team,
-                                sport: sport,
+                                sport: games.sport_title,
                                 bet: strategy.bet,
                                 betCount: 2,
                                 profit: strategy.payout,
