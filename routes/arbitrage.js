@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 
@@ -16,7 +17,8 @@ const Data = require('../models/requestsimplifier')
 
 const n = 10
 
-const key = "7a2863aea6a0940ffeb0b0ffacc9f548"
+const key = process.env.API_KEY
+
 
 /*
 
