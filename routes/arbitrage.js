@@ -154,9 +154,19 @@ router.get('/:region', checkToken, authorizedUser, checkSubscription, async (req
                 }
                 if(i > n){
                     req.datalogged.opportunities.push(...allarbed)
-
+                    const currentTime = Date.now()
+                    req.datalogged.opportunities.filter(opportunity => {
+                        const matchStartTime = new Date(opportunity.matchStart);
+                        const foundTime = new Date(opportunity.found);
+                        
+                        // Check if the game has started and if the opportunity was found more than 30 seconds ago
+                        if (matchStartTime <= currentTime && (currentTime - foundTime) > 30000) {
+                            return false;
+                        }
+                        return true;
+                    });
+                
                     const tenMinutesInMilliseconds = 20 * 60 * 1000; 
-                    const currentTime = Date.now(); 
 
                     const opps = req.datalogged.opportunities.filter((val) => {
                         const foundTime = new Date(val.found).getTime(); 
