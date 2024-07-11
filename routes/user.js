@@ -58,6 +58,7 @@ async function createUser(req, res, next){
     const phoneNumber = req.body.phoneNumber || ""
     const stripeCustomerID = req.body.stripeCustomerID || ""
     const iagreetotos = req.body.iagreetotos
+    const code = req.body.code
     try{
         if(email == null){
             res.status(403).json({"message": "Remember to enter a valid email."})
@@ -68,7 +69,8 @@ async function createUser(req, res, next){
                 password: password,
                 phoneNumber: phoneNumber,
                 stripeCustomerID: stripeCustomerID,
-                iagreetotos: iagreetotos
+                iagreetotos: iagreetotos,
+                code: code
             });
 
             const user = await newUser.save();

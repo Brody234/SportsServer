@@ -32,6 +32,9 @@ app.use(cors({
     exposedHeaders: ['Access-Control-Allow-Credentials'],
 }));
 
+const stripeRouter = require('./routes/stripe')
+app.use('/stripe', stripeRouter)
+
 app.use(express.json()); 
 
 
@@ -44,8 +47,6 @@ app.use('/arbitrage', arbitrageRouter)
 const affiliateRouter = require('./routes/affiliate')
 app.use('/affiliate', affiliateRouter)
 
-const stripeRouter = require('./routes/stripe')
-app.use('/stripe', stripeRouter)
 
 app.listen(port, () => console.log('server has started'));
 

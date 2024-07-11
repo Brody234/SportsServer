@@ -13,9 +13,24 @@ const affSchema = new Schema({
             type: Number
         }
     }],
+    signs: [{
+        date: {
+            type: Date
+        },
+        count: {
+            type: Number
+        }
+    }],
     code: {
         type: String,
         unique: true
+    },
+    commissionRate:{
+        type: Number,
+        default: .33
+    },
+    pendingFunds: {
+        type: Number
     }
 });
 

@@ -54,14 +54,12 @@ router.get('/affdata', checkToken, authorizedUser, affiliateFromToken, async (re
 })
 
 router.patch('/countclick', affiliateFromCode, async (req, res) =>{
-    console.log('here')
     try{
         const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
         console.log(req.aff)
         let clickEntry = req.aff.clicks?.find((click) => {
             return new Date(click.date).toISOString().split('T')[0] === today;
         }) || false;
-        console.log("here2")
 
         if (clickEntry) {
             // Increment the count if entry exists

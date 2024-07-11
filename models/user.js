@@ -17,7 +17,8 @@ const userSchema = new Schema({
     },
     stripeCustomerId: {
         type: String,
-        default: ""
+        default: "",
+        unique: true
     },
     iagreetotos:{
         type: Boolean,
