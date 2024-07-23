@@ -85,12 +85,17 @@ async function affiliateFromToken(req, res, next){
     if(!req.user.affiliate){
         return res.status(404).json({message: 'You need to become an affiliate to do this.'})
     }
-    const aff = await Affiliate.findById(req.user.affiliateId)
-    if(!aff){
-        return res.status(404).json({message: "Affiliate Data not found."})
+    try{
+        const aff = await Affiliate.findById(req.user.affiliateId)
+        if(!aff){
+            return res.status(404).json({message: "Affiliate Data not found."})
+        }
+        req.aff = aff
+        next()
     }
-    req.aff = aff
-    next()
+    catch(err){
+        return res.status(500).json(err)
+    }
 }
 
 async function affiliateFromCode(req, res, next){
