@@ -82,6 +82,9 @@ router.patch('/countclick', affiliateFromCode, async (req, res) =>{
 
 async function affiliateFromToken(req, res, next){
     console.log('in token')
+    if(!req.user.affiliate){
+        return res.status(404).json({message: 'You need to become an affiliate to do this.'})
+    }
     const aff = await Affiliate.findById(req.user.affiliateId)
     if(!aff){
         return res.status(404).json({message: "Affiliate Data not found."})

@@ -37,6 +37,15 @@ router.post('/login', findUser, checkPass, createToken, async (req, res)=>{
     }
 })
 
+router.get('/me', checkToken, authorizedUser, async (req, res)=>{
+    try{
+        res.status(200).json({user: req.user})
+    }
+    catch(err){
+        res.status(500).json(err)
+    }
+})
+
 async function findUser(req, res, next){
     const logname = req.body.logname;
 
@@ -62,7 +71,7 @@ async function createUser(req, res, next){
     try{
         if(email == null){
             res.status(403).json({"message": "Remember to enter a valid email."})
-        }
+        } 
         else{
             const newUser = await new User({
                 email: email,
