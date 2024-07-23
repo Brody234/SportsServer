@@ -201,7 +201,7 @@ async function find(region, sport, market) {
     const url = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?apiKey=${key}&regions=${region}&markets=${market}`;
     const response = await fetch(url);
     console.log("Response")
-    
+    console.log(response)
     if (!response.ok) {
         console.log('entering false error')
         return false
